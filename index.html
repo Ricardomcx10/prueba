@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso | MiWebPro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --p: #8e2de2; --s: #4a00e0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+        }
+
+        h2 { color: white; font-size: 30px; margin-bottom: 30px; font-weight: 800; letter-spacing: 1px; }
+        
+        .input-box { position: relative; margin-bottom: 20px; }
+        .input-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #8e2de2; }
+        
+        input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+        input::placeholder { color: rgba(255,255,255,0.5); }
+        input:focus { background: rgba(255,255,255,0.2); box-shadow: 0 0 15px rgba(142, 45, 226, 0.5); }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to right, #8e2de2, #4a00e0);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+        button:hover { transform: scale(1.05); box-shadow: 0 15px 25px rgba(142, 45, 226, 0.4); }
+
+        .toggle-link { color: rgba(255,255,255,0.7); margin-top: 25px; display: block; cursor: pointer; font-size: 14px; }
+        .toggle-link b { color: #8e2de2; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="glass-card" id="loginBox">
+        <h2>🚀 Login</h2>
+        <form onsubmit="iniciarSesion(event)">
+            <div class="input-box"><i class="fa-solid fa-envelope"></i><input type="email" id="logCorreo" placeholder="Correo" required></div>
+            <div class="input-box"><i class="fa-solid fa-lock"></i><input type="password" id="logClave" placeholder="Contraseña" required></div>
+            <button type="submit">ACCEDER</button>
+        </form>
+        <span class="toggle-link" onclick="toggleAuth()">¿Sin cuenta? <b>Regístrate</b></span>
+    </div>
+
+    <div class="glass-card hidden" id="registroBox">
+        <h2>🔥 Registro</h2>
+        <form onsubmit="registrar(event)">
+            <div class="input-box"><i class="fa-solid fa-user"></i><input type="text" id="regNombre" placeholder="Nombre de usuario" required></div>
+            <div class="input-box"><i class="fa-solid fa-envelope"></i><input type="email" id="regCorreo" placeholder="Correo" required></div>
+            <div class="input-box"><i class="fa-solid fa-lock"></i><input type="password" id="regClave" placeholder="Crear Contraseña" required></div>
+            <button type="submit">REGISTRARME</button>
+        </form>
+        <span class="toggle-link" onclick="toggleAuth()">¿Ya tienes cuenta? <b>Inicia Sesión</b></span>
+    </div>
+
+    <script>
+        function toggleAuth() {
+            document.getElementById('loginBox').classList.toggle('hidden');
+            document.getElementById('registroBox').classList.toggle('hidden');
+        }
+        function registrar(event) {
+            event.preventDefault();
+            const user = { 
+                nombre: document.getElementById('regNombre').value, 
+                correo: document.getElementById('regCorreo').value, 
+                clave: document.getElementById('regClave').value 
+            };
+            localStorage.setItem('user_' + user.correo, JSON.stringify(user));
+            localStorage.setItem('usuarioActual', JSON.stringify(user));
+            window.location.href = "dashboard.html";
+        }
+        function iniciarSesion(event) {
+            event.preventDefault();
+            const correo = document.getElementById('logCorreo').value;
+            const clave = document.getElementById('logClave').value;
+            const saved = JSON.parse(localStorage.getItem('user_' + correo));
+            if (saved && saved.clave === clave) {
+                localStorage.setItem('usuarioActual', JSON.stringify(saved));
+                window.location.href = "dashboard.html";
+            } else { alert("Datos incorrectos"); }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nexus OS | Sistema de Control de Ingeniería</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-main: #010103;
+            --pink-neon: #ff0080;
+            --cyan-neon: #00dfd8;
+            --violet-glow: #7928ca;
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-dim: #8b9bb4;
+            --drawer-bg: rgba(1, 1, 3, 0.98);
+        }
+
+        body.light-theme {
+            --bg-main: #f0f4f8;
+            --pink-neon: #e11d48;
+            --cyan-neon: #0ea5e9;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.06);
+            --text-main: #0f172a;
+            --text-dim: #64748b;
+            --drawer-bg: rgba(255, 255, 255, 0.98);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; transition: background-color 0.4s; }
+        
+        body { background-color: var(--bg-main); color: var(--text-main); font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+        .aurora-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(circle at 10% 10%, rgba(255, 0, 128, 0.08) 0%, transparent 35%), radial-gradient(circle at 90% 90%, rgba(0, 223, 216, 0.08) 0%, transparent 35%); animation: drift 15s infinite alternate ease-in-out; }
+        @keyframes drift { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+        /* HEADER */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 2rem; border-bottom: 0.5px solid var(--glass-border); backdrop-filter: blur(25px); position: sticky; top: 0; z-index: 1000; }
+        .logo-text { font-weight: 800; letter-spacing: 3px; font-size: 1.1rem; text-transform: uppercase; }
+        .nav-trigger { font-size: 1.3rem; cursor: pointer; color: var(--text-main); transition: 0.3s; }
+        .nav-trigger:hover { color: var(--cyan-neon); transform: rotate(90deg); }
+
+        /* MENU LATERAL (DRAWER) */
+        .drawer { position: fixed; top: 0; left: -300px; width: 300px; height: 100vh; background: var(--drawer-bg); backdrop-filter: blur(40px); border-right: 1px solid var(--glass-border); z-index: 2000; padding: 2.5rem 1.5rem; transition: cubic-bezier(0.16, 1, 0.3, 1) 0.6s; display: flex; flex-direction: column; }
+        .drawer.active { left: 0; box-shadow: 25px 0 60px rgba(0,0,0,0.5); }
+        .drawer-close { align-self: flex-end; cursor: pointer; font-size: 1.5rem; margin-bottom: 2rem; color: var(--text-dim); }
+        .drawer-link { display: flex; align-items: center; gap: 15px; padding: 15px; color: var(--text-dim); text-decoration: none; border-radius: 14px; margin-bottom: 0.5rem; font-weight: 600; transition: 0.3s; }
+        .drawer-link:hover { background: var(--glass-bg); color: var(--cyan-neon); transform: translateX(5px); }
+        .logout-item { margin-top: auto; color: var(--pink-neon) !important; cursor: pointer; border: 1px solid rgba(255, 0, 128, 0.2); }
+
+        /* AUTH OVERLAY */
+        #authOverlay { position: fixed; inset: 0; background: var(--bg-main); z-index: 5000; display: flex; align-items: center; justify-content: center; }
+        .auth-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 3.5rem; border-radius: 35px; text-align: center; backdrop-filter: blur(50px); max-width: 420px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+
+        /* GRID LAYOUT */
+        .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+        .glass-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 28px; padding: 2rem; backdrop-filter: blur(40px); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .glass-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.15); }
+        .mod-6 { grid-column: span 6; }
+        .mod-12 { grid-column: span 12; }
+
+        /* FINANZAS Y BARRA */
+        .segment-bar { display: flex; height: 10px; border-radius: 20px; overflow: hidden; background: rgba(0,0,0,0.4); margin: 25px 0 15px; }
+        .seg { height: 100%; transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .seg-nec { background: var(--pink-neon); box-shadow: 0 0 15px var(--pink-neon); }
+        .seg-des { background: var(--violet-glow); box-shadow: 0 0 15px var(--violet-glow); }
+        .seg-aho { background: var(--cyan-neon); box-shadow: 0 0 15px var(--cyan-neon); }
+
+        /* FORMULARIOS */
+        .neon-input { width: 100%; background: rgba(0,0,0,0.25); border: 1px solid var(--glass-border); border-radius: 14px; padding: 14px; color: #fff; font-family: 'JetBrains Mono'; margin-bottom: 12px; outline: none; border-left: 3px solid transparent; }
+        .light-theme .neon-input { background: rgba(255,255,255,0.6); color: #000; }
+        .neon-input:focus { border-left-color: var(--cyan-neon); background: rgba(0,0,0,0.4); }
+        
+        .btn-neon { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-main); padding: 12px 22px; border-radius: 14px; cursor: pointer; font-weight: 700; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+        .btn-neon:hover { background: var(--cyan-neon); color: #000; box-shadow: 0 0 20px var(--cyan-neon); }
+
+        /* LISTAS */
+        .list-container { list-style: none; margin-top: 20px; max-height: 180px; overflow-y: auto; padding-right: 5px; }
+        .list-container::-webkit-scrollbar { width: 4px; }
+        .list-container::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+        .list-row { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid var(--glass-border); align-items: center; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+        @media (max-width: 950px) { .bento-grid { grid-template-columns: 1fr; } .mod-6 { grid-column: span 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="aurora-bg"></div>
+
+    <div id="authOverlay">
+        <div class="auth-card">
+            <h1 style="letter-spacing: 5px; margin-bottom: 1rem;">NEXUS<span style="color:var(--cyan-neon)">OS</span></h1>
+            <p style="color:var(--text-dim); margin-bottom: 2.5rem; font-size: 0.9rem;">Identificación de credenciales requerida</p>
+            <button class="btn-neon" onclick="setRole(true)" style="width: 100%; margin-bottom: 15px; border-color: var(--cyan-neon);">INGENIERÍA / ESTUDIANTE</button>
+            <button class="btn-neon" onclick="setRole(false)" style="width: 100%;">USUARIO VISITANTE</button>
+        </div>
+    </div>
+
+    <header>
+        <i class="fa-solid fa-bars-staggered nav-trigger" onclick="toggleMenu()"></i>
+        <div class="logo-text" id="mainLogo">NEXUS<span style="color:var(--cyan-neon)">OS</span></div>
+        <i class="fa-solid fa-circle-half-stroke nav-trigger" onclick="toggleTheme()"></i>
+    </header>
+
+    <nav class="drawer" id="sideMenu">
+        <i class="fa-solid fa-xmark drawer-close" onclick="toggleMenu()"></i>
+        
+        <a href="javascript:void(0)" class="drawer-link" onclick="toggleMenu()">
+            <i class="fa-solid fa-house"></i> Panel Principal
+        </a>
+        <a href="javascript:void(0)" class="drawer-link" onclick="runStats()">
+            <i class="fa-solid fa-chart-line"></i> Estadísticas Real
+        </a>
+        <a href="javascript:void(0)" class="drawer-link" onclick="openSettings()">
+            <i class="fa-solid fa-sliders"></i> Ajustes Sistema
+        </a>
+        
+        <div class="drawer-link logout-item" onclick="logout()">
+            <i class="fa-solid fa-power-off"></i> FINALIZAR SESIÓN
+        </div>
+    </nav>
+
+    <main class="bento-grid">
+        
+        <section class="glass-card mod-6">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                <span style="font-weight:800; color:var(--cyan-neon); letter-spacing:1px;">FINANCE CORE</span>
+                <i class="fa-solid fa-microchip"></i>
+            </div>
+            
+            <input type="number" id="inUSD" class="neon-input" placeholder="Ingreso Mensual (USD)" oninput="calcFinance()">
+            
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="expN" class="neon-input" placeholder="Etiqueta gasto">
+                <input type="number" id="expV" class="neon-input" placeholder="$" style="width:90px;">
+                <button class="btn-neon" onclick="addExpense()"><i class="fa-solid fa-minus"></i></button>
+            </div>
+
+            <ul id="expList" class="list-container"></ul>
+
+            <div class="segment-bar">
+                <div class="seg seg-nec" id="barNec" style="width: 0%"></div>
+                <div class="seg seg-des" id="barDes" style="width: 0%"></div>
+                <div class="seg seg-aho" id="barAho" style="width: 0%"></div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 0.65rem; color: var(--text-dim); text-align:center;">
+                <div>NECESIDAD (50%)<br><span id="vNec" style="color:var(--text-main); font-weight:800;">$0</span></div>
+                <div>OCIO (30%)<br><span id="vDes" style="color:var(--text-main); font-weight:800;">$0</span></div>
+                <div>AHORRO (20%)<br><span id="vAho" style="color:var(--text-main); font-weight:800;">$0</span></div>
+            </div>
+
+            <div style="margin-top:25px; text-align:right;">
+                <small style="color:var(--text-dim); letter-spacing:1px;">NETO OPERATIVO</small>
+                <div style="font-size: 2.2rem; font-family:'JetBrains Mono'; color:var(--cyan-neon)" id="totalNeto">$0.00</div>
+            </div>
+        </section>
+
+        <section class="glass-card mod-6" id="studentModule" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                <span style="font-weight:800; color:var(--pink-neon); letter-spacing:1px;">ACADEMIC LOGS</span>
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="subN" class="neon-input" placeholder="Asignatura">
+                <input type="time" id="subT" class="neon-input" style="width:130px;">
+                <button class="btn-neon" onclick="addSubject()"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            <ul id="subList" class="list-container"></ul>
+        </section>
+
+        <section class="glass-card mod-6">
+            <div style="font-weight:800; color:var(--violet-glow); margin-bottom: 20px;">STACK DE ACTIVIDADES</div>
+            <input type="text" id="tInput" class="neon-input" placeholder="Nueva tarea de ingeniería..." onkeypress="if(event.key==='Enter') addTask()">
+            <ul id="tList" class="list-container"></ul>
+        </section>
+
+        <section class="glass-card mod-6">
+            <div style="font-weight:800; color:var(--cyan-neon); margin-bottom: 20px;">ACCESO RÁPIDO</div>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="lN" class="neon-input" placeholder="Nombre">
+                <input type="text" id="lU" class="neon-input" placeholder="URL">
+                <button class="btn-neon" onclick="addLink()"><i class="fa-solid fa-link"></i></button>
+            </div>
+            <div id="lCont" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:15px;"></div>
+        </section>
+
+        <section class="glass-card mod-12">
+            <div style="font-weight:800; margin-bottom:10px; font-size: 0.7rem; color: var(--text-dim);">SYSTEM NOTES</div>
+            <textarea id="refl" class="neon-input" style="height:100px; resize:none;" placeholder="Escribe tus observaciones técnicas aquí..." oninput="saveAll()"></textarea>
+        </section>
+    </main>
+
+    <script>
+        // === GESTIÓN DE INTERFAZ Y ROL ===
+        function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); }
+        
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            localStorage.setItem('n_theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+        }
+
+        function setRole(isStudent) {
+            localStorage.setItem('n_role', isStudent ? 'student' : 'user');
+            location.reload();
+        }
+
+        function logout() {
+            if(confirm("¿Cerrar sesión y limpiar terminal?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // === BOTONES DEL MENÚ LATERAL ===
+        function runStats() {
+            const ing = parseFloat(document.getElementById('inUSD').value) || 0;
+            const gastado = expenses.reduce((a, b) => a + b.v, 0);
+            const neto = ing - gastado;
+            toggleMenu();
+            alert(`📊 REPORTE DE SISTEMA:\n\n` +
+                  `• Ingresos Totales: $${ing.toFixed(2)}\n` +
+                  `• Gastos Acumulados: $${gastado.toFixed(2)}\n` +
+                  `• Eficiencia (Neto): $${neto.toFixed(2)}\n` +
+                  `• Sugerencia Ahorro: $${(neto * 0.2).toFixed(2)}`);
+        }
+
+        function openSettings() {
+            const name = prompt("Introduce el nuevo nombre del sistema:");
+            if(name) {
+                localStorage.setItem('n_sys_name', name);
+                updateSystemName(name);
+            }
+            toggleMenu();
+        }
+
+        function updateSystemName(name) {
+            document.getElementById('mainLogo').innerHTML = `${name.toUpperCase()}<span style="color:var(--cyan-neon)">OS</span>`;
+        }
+
+        // === LÓGICA DE DATOS CORE ===
+        let expenses = JSON.parse(localStorage.getItem('n_exps')) || [];
+        let subjects = JSON.parse(localStorage.getItem('n_subs')) || [];
+        let tasks = JSON.parse(localStorage.getItem('n_tasks')) || [];
+        let links = JSON.parse(localStorage.getItem('n_links')) || [];
+
+        function addExpense() {
+            const n = document.getElementById('expN').value;
+            const v = parseFloat(document.getElementById('expV').value);
+            if(n && v) {
+                expenses.push({n, v});
+                document.getElementById('expN').value = '';
+                document.getElementById('expV').value = '';
+                calcFinance();
+            }
+        }
+
+        function calcFinance() {
+            const ingreso = parseFloat(document.getElementById('inUSD').value) || 0;
+            const gastado = expenses.reduce((a, b) => a + b.v, 0);
+            const neto = ingreso - gastado;
+            const nVal = neto > 0 ? neto : 0;
+
+            document.getElementById('totalNeto').innerText = `$${neto.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+            
+            // Cálculos 50/30/20
+            document.getElementById('vNec').innerText = `$${(nVal * 0.5).toFixed(0)}`;
+            document.getElementById('vDes').innerText = `$${(nVal * 0.3).toFixed(0)}`;
+            document.getElementById('vAho').innerText = `$${(nVal * 0.2).toFixed(0)}`;
+
+            // Animación Barra
+            if(nVal > 0) {
+                document.getElementById('barNec').style.width = '50%';
+                document.getElementById('barDes').style.width = '30%';
+                document.getElementById('barAho').style.width = '20%';
+            } else {
+                document.querySelectorAll('.seg').forEach(s => s.style.width = '0%');
+            }
+
+            renderExpenses();
+            saveAll();
+        }
+
+        function renderExpenses() {
+            document.getElementById('expList').innerHTML = expenses.map((e, i) => `
+                <li class="list-row">
+                    <span>${e.n}</span>
+                    <span style="font-family:'JetBrains Mono'; color:var(--pink-neon)">-$${e.v} 
+                        <i class="fa-solid fa-trash-can" style="margin-left:10px; cursor:pointer; opacity:0.6;" onclick="expenses.splice(${i},1);calcFinance()"></i>
+                    </span>
+                </li>
+            `).join('');
+        }
+
+        function addSubject() {
+            const n = document.getElementById('subN').value;
+            const t = document.getElementById('subT').value;
+            if(n && t) { subjects.push({n, t}); renderSubjects(); saveAll(); document.getElementById('subN').value=''; }
+        }
+
+        function renderSubjects() {
+            document.getElementById('subList').innerHTML = subjects.map((s, i) => `
+                <li class="list-row">
+                    <span><b>${s.t}</b> • ${s.n}</span>
+                    <i class="fa-solid fa-xmark" onclick="subjects.splice(${i},1);renderSubjects();saveAll()" style="cursor:pointer; color:var(--pink-neon)"></i>
+                </li>
+            `).join('');
+        }
+
+        function addTask() {
+            const v = document.getElementById('tInput').value;
+            if(v) { tasks.push(v); document.getElementById('tInput').value = ''; renderTasks(); saveAll(); }
+        }
+
+        function renderTasks() {
+            document.getElementById('tList').innerHTML = tasks.map((t, i) => `
+                <li class="list-row">
+                    <span>${t}</span>
+                    <i class="fa-solid fa-check" onclick="tasks.splice(${i},1);renderTasks();saveAll()" style="color:var(--cyan-neon); cursor:pointer;"></i>
+                </li>
+            `).join('');
+        }
+
+        function addLink() {
+            const n = document.getElementById('lN').value;
+            let u = document.getElementById('lU').value;
+            if(n && u) {
+                if(!u.startsWith('http')) u = 'https://' + u;
+                links.push({n, u}); renderLinks(); saveAll();
+                document.getElementById('lN').value = ''; document.getElementById('lU').value = '';
+            }
+        }
+
+        function renderLinks() {
+            document.getElementById('lCont').innerHTML = links.map((l, i) => `
+                <div style="background:var(--glass-bg); padding:8px 15px; border-radius:50px; border:1px solid var(--glass-border); font-size:0.75rem; display:flex; align-items:center; gap:8px;">
+                    <a href="${l.u}" target="_blank" style="color:inherit; text-decoration:none;">${l.n}</a>
+                    <i class="fa-solid fa-xmark" onclick="links.splice(${i},1);renderLinks();saveAll()" style="cursor:pointer; opacity:0.5;"></i>
+                </div>
+            `).join('');
+        }
+
+        function saveAll() {
+            localStorage.setItem('n_usd', document.getElementById('inUSD').value);
+            localStorage.setItem('n_exps', JSON.stringify(expenses));
+            localStorage.setItem('n_subs', JSON.stringify(subjects));
+            localStorage.setItem('n_tasks', JSON.stringify(tasks));
+            localStorage.setItem('n_links', JSON.stringify(links));
+            localStorage.setItem('n_refl', document.getElementById('refl').value);
+        }
+
+        // CARGA INICIAL
+        window.onload = () => {
+            if (localStorage.getItem('n_theme') === 'light') toggleTheme();
+            
+            const role = localStorage.getItem('n_role');
+            if(role) {
+                document.getElementById('authOverlay').style.display = 'none';
+                if(role === 'student') document.getElementById('studentModule').style.display = 'block';
+            }
+
+            const savedName = localStorage.getItem('n_sys_name');
+            if(savedName) updateSystemName(savedName);
+
+            document.getElementById('inUSD').value = localStorage.getItem('n_usd') || '';
+            document.getElementById('refl').value = localStorage.getItem('n_refl') || '';
+            
+            calcFinance(); renderSubjects(); renderTasks(); renderLinks();
+        };
+    </script>
+</body>
+</html>
