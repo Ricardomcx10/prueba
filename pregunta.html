@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onyx Aurora · Elige tu rol</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      background: #010103;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .background {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 70% 30%, #ff0080 0%, transparent 30%),
+                  radial-gradient(circle at 20% 70%, #00dfd8 0%, transparent 35%),
+                  radial-gradient(circle at 50% 50%, #8a2be2 0%, transparent 40%),
+                  #010103;
+      filter: blur(80px);
+      animation: wave 12s infinite alternate;
+    }
+    @keyframes wave {
+      0% { transform: scale(1) rotate(0deg); }
+      100% { transform: scale(1.2) rotate(2deg); filter: blur(70px); }
+    }
+    .card {
+      position: relative;
+      z-index: 10;
+      width: 90%;
+      max-width: 700px;
+      background: rgba(10, 10, 20, 0.3);
+      backdrop-filter: blur(60px);
+      -webkit-backdrop-filter: blur(60px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      padding: 4rem 3rem;
+      box-shadow: 0 0 100px #ff0080, inset 0 0 0 1px rgba(255,255,255,0.05);
+      text-align: center;
+    }
+    h2 {
+      font-size: 3.5rem;
+      font-weight: 400;
+      color: white;
+      margin-bottom: 3rem;
+      text-shadow: 0 0 30px rgba(255,0,128,0.5);
+    }
+    .options {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+    }
+    .option-btn {
+      flex: 1;
+      max-width: 250px;
+      padding: 2rem 0;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 80px;
+      color: white;
+      font-size: 2.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.4s;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px black;
+      position: relative;
+      overflow: hidden;
+    }
+    .option-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .option-btn:hover::before {
+      width: 400px;
+      height: 400px;
+    }
+    .option-btn:hover {
+      background: rgba(255, 0, 128, 0.2);
+      border-color: #ff0080;
+      box-shadow: 0 0 80px #ff0080;
+      transform: scale(1.1);
+    }
+    .option-btn:first-child:hover {
+      background: rgba(0, 223, 216, 0.2);
+      border-color: #00dfd8;
+      box-shadow: 0 0 80px #00dfd8;
+    }
+    @media (max-width: 600px) {
+      .card { padding: 3rem 2rem; border-radius: 60px; }
+      h2 { font-size: 2.5rem; }
+      .option-btn { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="background"></div>
+  <div class="card">
+    <h2>¿Eres estudiante?</h2>
+    <div class="options">
+      <button class="option-btn" id="btnSi">Sí</button>
+      <button class="option-btn" id="btnNo">No</button>
+    </div>
+  </div>
+  <script>
+    document.getElementById('btnSi').addEventListener('click', () => {
+      localStorage.setItem('oa_isStudent', '1');
+      window.location.href = 'dashboard.html';
+    });
+    document.getElementById('btnNo').addEventListener('click', () => {
+      localStorage.setItem('oa_isStudent', '0');
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>
