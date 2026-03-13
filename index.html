@@ -112,7 +112,6 @@
             };
             localStorage.setItem('user_' + user.correo, JSON.stringify(user));
             localStorage.setItem('usuarioActual', JSON.stringify(user));
-            window.location.href = "pregunta.html";
             window.location.href = "dashboard.html";
         }
         function iniciarSesion(event) {
@@ -122,8 +121,7 @@
             const saved = JSON.parse(localStorage.getItem('user_' + correo));
             if (saved && saved.clave === clave) {
                 localStorage.setItem('usuarioActual', JSON.stringify(saved));
-                window.location.href = "pregunta.html";
-                window.location.href = "dashboard.html";
+                 window.location.href = "dashboard.html";
             } else { alert("Datos incorrectos"); }
         }
     </script>
