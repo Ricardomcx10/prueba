@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>MIWEBPRO · DASHBOARD</title>
-  <!-- Google Fonts: Inter y JetBrains Mono -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <!-- Font Awesome 6 (kit opcional, usamos la gratuita) -->
+  <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     /* ===== RESET Y VARIABLES ===== */
@@ -202,6 +202,77 @@
       transform: translateX(-8px);
     }
 
+    /* ===== SELECTOR DE ROL INTEGRADO ===== */
+    .rol-selector {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(3, 3, 10, 0.8);
+      backdrop-filter: blur(20px);
+      z-index: 300;
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.4s;
+    }
+    .rol-selector.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    .rol-card {
+      background: rgba(20, 20, 35, 0.4);
+      backdrop-filter: blur(40px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 60px;
+      padding: 3rem 4rem;
+      text-align: center;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
+      animation: aparecer 0.6s;
+    }
+    .rol-card h2 {
+      font-size: 2.5rem;
+      font-weight: 400;
+      margin-bottom: 2.5rem;
+      color: #fff;
+    }
+    .rol-botones {
+      display: flex;
+      gap: 2rem;
+    }
+    .rol-btn {
+      padding: 1.5rem 3rem;
+      border-radius: 60px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
+      font-size: 2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .rol-btn i {
+      font-size: 2.2rem;
+    }
+    .rol-btn:hover {
+      background: rgba(255, 217, 102, 0.2);
+      border-color: #ffd966;
+      transform: scale(1.05);
+      box-shadow: 0 0 50px #ffd966;
+    }
+    @media (max-width: 600px) {
+      .rol-card { padding: 2rem; }
+      .rol-card h2 { font-size: 1.8rem; }
+      .rol-btn { padding: 1rem 2rem; font-size: 1.5rem; }
+      .rol-botones { flex-direction: column; gap: 1rem; }
+    }
+
     /* ===== BENTO GRID ===== */
     .bento-grid {
       position: relative;
@@ -210,7 +281,7 @@
       margin: 0 auto;
       padding: 0 1.5rem 2rem;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 2rem;
     }
 
@@ -257,12 +328,6 @@
       0% { opacity: 0; transform: translateY(30px); }
       100% { opacity: 1; transform: translateY(0); }
     }
-
-    .tarjeta:nth-child(1) { animation-delay: 0.05s; }
-    .tarjeta:nth-child(2) { animation-delay: 0.10s; }
-    .tarjeta:nth-child(3) { animation-delay: 0.15s; }
-    .tarjeta:nth-child(4) { animation-delay: 0.20s; }
-    .tarjeta:nth-child(5) { animation-delay: 0.25s; }
 
     .tarjeta h3 {
       font-size: 1.6rem;
@@ -518,6 +583,16 @@
       gap: 0.8rem;
       overflow-x: auto;
       padding: 0.5rem 0;
+      scrollbar-width: thin;
+      scrollbar-color: #ffd966 #03030a;
+    }
+
+    .contenedor-enlaces::-webkit-scrollbar {
+      height: 4px;
+    }
+    .contenedor-enlaces::-webkit-scrollbar-thumb {
+      background: #ffd966;
+      border-radius: 10px;
     }
 
     .pill-enlace {
@@ -555,11 +630,11 @@
     /* ===== MEDIA QUERIES PARA MÓVIL ===== */
     @media (max-width: 600px) {
       .cabecera {
-        margin: 1rem 0.5rem;
-        padding: 0.6rem 1.2rem;
+        margin: 1rem auto;
+        padding: 0.8rem 1.5rem;
       }
       .logo {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
         letter-spacing: 0.1em;
       }
       .menu-btn {
@@ -568,26 +643,19 @@
         font-size: 1.4rem;
       }
       .bento-grid {
-        padding: 0 0.5rem 1rem;
+        padding: 0 1rem 1rem;
         gap: 1rem;
-        grid-template-columns: 1fr; /* Forzar 1 columna en móvil */
+        grid-template-columns: 1fr;
       }
       .tarjeta {
         padding: 1.5rem 1.2rem;
       }
       .tarjeta h3 {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
         margin-bottom: 1.2rem;
       }
-      .tarjeta h3 i {
-        font-size: 1.5rem;
-      }
-      input, select, textarea {
+      input, select, textarea, button {
         padding: 0.8rem 1.2rem;
-        font-size: 0.9rem;
-      }
-      button {
-        padding: 0.7rem 1.2rem;
         font-size: 0.9rem;
       }
       .estadisticas-finanza {
@@ -600,59 +668,9 @@
         justify-content: space-between;
         padding: 0.5rem 1rem;
       }
-      .estadistica-item i {
-        font-size: 1.1rem;
-      }
-      .contenedor-barra {
-        height: 10px;
-        margin: 1rem 0;
-      }
-      .gasto-item {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-      .gasto-info {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-      .item-tarea {
-        flex-wrap: wrap;
-        padding: 0.6rem 1rem;
-      }
-      .item-tarea button {
-        padding: 0.2rem 0.8rem;
-      }
       .drawer {
+        width: 85vw;
         padding: 2rem 1.5rem;
-      }
-      .drawer-item {
-        padding: 1rem 1.2rem;
-        font-size: 1.1rem;
-      }
-    }
-
-    /* Ajustes para pantallas muy pequeñas (menos de 400px) */
-    @media (max-width: 400px) {
-      .cabecera {
-        padding: 0.5rem 1rem;
-      }
-      .logo {
-        font-size: 1.2rem;
-      }
-      .menu-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
-      }
-      .tarjeta {
-        padding: 1.2rem 1rem;
-      }
-      input, select, textarea {
-        padding: 0.7rem 1rem;
-      }
-      .gasto-info {
-        flex-direction: column;
-        align-items: flex-start;
       }
     }
   </style>
@@ -675,31 +693,42 @@
     <div class="drawer-item" id="resetData"><i class="fas fa-trash-alt"></i> Reiniciar datos</div>
   </div>
 
-  <!-- BENTO GRID -->
+  <!-- SELECTOR DE ROL (aparece si no hay rol guardado) -->
+  <div class="rol-selector" id="rolSelector">
+    <div class="rol-card">
+      <h2>¿Eres estudiante?</h2>
+      <div class="rol-botones">
+        <button class="rol-btn" id="rolSi"><i class="fas fa-graduation-cap"></i> Sí</button>
+        <button class="rol-btn" id="rolNo"><i class="fas fa-briefcase"></i> No</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BENTO GRID (se llena con JS) -->
   <div class="bento-grid" id="bentoGrid"></div>
 
   <script>
     (function() {
-      // ===== REDIRECCIONES =====
-      if (!localStorage.getItem('oa_currentUser')) {
+      // ===== OBTENER USUARIO ACTUAL =====
+      const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual'));
+      if (!usuarioActual || !usuarioActual.correo) {
         window.location.href = 'index.html';
         return;
       }
-      if (!localStorage.getItem('oa_isStudent')) {
-        window.location.href = 'pregunta.html';
-        return;
-      }
 
-      // ===== CONSTANTES Y ESTADO =====
+      // Usamos el correo como prefijo para los datos (para multi-usuario)
+      const userPrefix = usuarioActual.correo.replace(/[@.]/g, '_') + '_';
+
+      // ===== CONSTANTES Y ESTADO (con prefijo) =====
       const STORAGE_KEYS = {
-        isStudent: 'oa_isStudent',
-        classes: 'oa_classes',
-        finance: 'oa_finance',
-        transactions: 'oa_transactions',
-        diary: 'oa_diary',
-        tasks: 'oa_tasks',
-        links: 'oa_links',
-        snoozed: 'oa_snoozed'
+        isStudent: userPrefix + 'isStudent',
+        classes: userPrefix + 'classes',
+        finance: userPrefix + 'finance',
+        transactions: userPrefix + 'transactions',
+        diary: userPrefix + 'diary',
+        tasks: userPrefix + 'tasks',
+        links: userPrefix + 'links',
+        snoozed: userPrefix + 'snoozed'
       };
 
       let isStudent = localStorage.getItem(STORAGE_KEYS.isStudent) === '1';
@@ -718,7 +747,7 @@
         hora: c.hora || c.time || '08:00'
       }));
 
-      // ===== PARTÍCULAS ELEGANTES =====
+      // ===== PARTÍCULAS =====
       const canvas = document.getElementById('particle-canvas');
       const ctx = canvas.getContext('2d');
       let width, height, particles = [];
@@ -793,22 +822,59 @@
 
       changeRole.addEventListener('click', () => {
         localStorage.removeItem(STORAGE_KEYS.isStudent);
-        window.location.href = 'pregunta.html';
+        window.location.reload(); // Recargar para mostrar selector de rol
       });
 
       resetData.addEventListener('click', () => {
-        if (confirm('¿Reiniciar todos los datos?')) {
-          const currentUser = localStorage.getItem('oa_currentUser');
-          localStorage.clear();
-          localStorage.setItem('oa_currentUser', currentUser);
+        if (confirm('¿Reiniciar todos tus datos?')) {
+          // Eliminar solo las claves del usuario actual
+          Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
           window.location.reload();
         }
       });
+
+      // ===== SELECTOR DE ROL =====
+      const rolSelector = document.getElementById('rolSelector');
+      const rolSi = document.getElementById('rolSi');
+      const rolNo = document.getElementById('rolNo');
+
+      function mostrarSelectorRol() {
+        rolSelector.classList.add('visible');
+      }
+
+      function ocultarSelectorRol() {
+        rolSelector.classList.remove('visible');
+      }
+
+      rolSi.addEventListener('click', () => {
+        localStorage.setItem(STORAGE_KEYS.isStudent, '1');
+        isStudent = true;
+        ocultarSelectorRol();
+        render();
+      });
+
+      rolNo.addEventListener('click', () => {
+        localStorage.setItem(STORAGE_KEYS.isStudent, '0');
+        isStudent = false;
+        ocultarSelectorRol();
+        render();
+      });
+
+      // Si no hay rol, mostrar selector
+      if (localStorage.getItem(STORAGE_KEYS.isStudent) === null) {
+        mostrarSelectorRol();
+      }
 
       // ===== RENDERIZADO =====
       const bentoGrid = document.getElementById('bentoGrid');
 
       function render() {
+        // Si no hay rol, no renderizar el grid (solo el selector)
+        if (localStorage.getItem(STORAGE_KEYS.isStudent) === null) {
+          bentoGrid.innerHTML = '';
+          return;
+        }
+
         let html = '';
         if (isStudent) html += renderHorario();
         html += renderFinanzas();
@@ -845,7 +911,7 @@
 
         return `
           <div class="tarjeta" id="modulo-horario">
-            <h3><i class="fas fa-calendar-alt"></i> Horario de clases</h3>
+            <h3><i class="fas fa-calendar-alt"></i> Horario academico</h3>
             <div id="alertas-horario">${alertas}</div>
             <div style="margin:1.5rem 0;">${lista}</div>
             <div style="display:flex; gap:0.5rem;">
@@ -892,7 +958,7 @@
 
         return `
           <div class="tarjeta" id="modulo-finanzas">
-            <h3><i class="fas fa-chart-pie"></i> Finanzas</h3>
+            <h3><i class="fas fa-chart-pie"></i> Control Financiero</h3>
             <div style="display:flex; gap:0.5rem;">
               <input type="number" id="incomeInput" placeholder="Ingreso USD" value="${income}" style="flex:2;">
               <input type="number" id="rateInput" placeholder="Tasa Bs/USD" value="${rate}" style="flex:1;">
@@ -1168,6 +1234,7 @@
         }
       });
 
+      // Render inicial
       render();
     })();
   </script>
